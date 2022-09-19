@@ -13,7 +13,7 @@ constructUseURL(years, stateCd, countyCd, categories)
 
 \item{countyCd}{could be numeric (County IDs from countyCdLookup) or character ("ALL")}
 
-\item{categories}{character Two-letter cateogory abbreviation(s)}
+\item{categories}{character Two-letter category abbreviation(s)}
 }
 \value{
 url string

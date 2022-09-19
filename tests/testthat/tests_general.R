@@ -573,3 +573,12 @@ test_that("importWQP convertType", {
   expect_is(lakeSites_chars$lat, "character")
   
 })
+
+test_that("constructWQP_validateURL", {
+  testthat::skip_on_cran()
+  
+  char <- 'Dissolved oxygen'
+  URL_val <- constructWQP_validateURL(characteristicName=char)
+  expect_equal(URL_val, "https://www.waterqualitydata.us/Codes/characteristicname?text=Dissolved%20oxygen&pagesize=200&pagenumber=18mimeType=json")
+  
+})

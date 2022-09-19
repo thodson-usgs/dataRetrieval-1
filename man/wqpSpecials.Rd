@@ -82,6 +82,8 @@ sites <- whatWQPsamples(countycode="US:55:025",siteType=type)
 type <- "Stream"
 sites <- whatWQPmetrics(countycode="US:55:025",siteType=type)
 lakeSites <- whatWQPmetrics(siteType = "Lake, Reservoir, Impoundment", statecode = "US:55")
+lakeSites_chars <- whatWQPdata(siteType = "Lake, Reservoir, Impoundment", 
+                       statecode = "US:55", convertType=FALSE)
 }
 \dontshow{if (is_dataRetrieval_user()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 \donttest{

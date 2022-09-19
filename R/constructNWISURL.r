@@ -297,7 +297,7 @@ constructNWISURL <- function(siteNumbers,parameterCd="00060",startDate="",endDat
 #'                                 parameterCd = charNames,
 #'                                 startDate,"")
 #' obs_url_orig
-constructWQPURL <- function(siteNumbers,parameterCd,startDate,endDate,zip=TRUE){
+constructWQPURL <- function(siteNumbers,parameterCd,characteristicName, startDate,endDate,zip=TRUE){
   
   multipleSites <- length(siteNumbers) > 1
   multiplePcodes <- length(parameterCd)>1
@@ -341,6 +341,75 @@ constructWQPURL <- function(siteNumbers,parameterCd,startDate,endDate,zip=TRUE){
 
 }
 
+
+
+
+
+#' Construct and validate URL for WQP
+#'
+#' Construct WQP URL to retrieve data from here: \url{https://www.waterqualitydata.us}
+#'
+#' @param characteristicName character characteristic name or characters contained within a characteristic name.
+#' @keywords data import WQP web service
+#' @return url string
+#' @export
+#' @examples
+#' char <- 'Dissolved oxygen'
+#' URL_val <- constructWQP_validateURL(characteristicName=char)
+#' URL_val
+constructWQP_validateURL <- function(characteristicName){
+  url <- paste0("https://www.waterqualitydata.us/Codes/characteristicname?text=", 
+                URLencode(characteristicName),
+                "&pagesize=200&pagenumber=18mimeType=json")
+  
+  if(length(characteristicName) > 1) {
+    warning("Only able to request one characteristicName at a time.")}
+  
+  else{
+    characteristicName <- sapply(characteristicName, URLencode, USE.NAMES= TRUE, reserved = TRUE)
+  }
+  
+  return(url)
+}
+
+
+
+
+
+#' Validate characteristic name
+#'
+#' Validate characteristic name
+#'
+#' @param characteristicName character characteristic name or characters contained within a characteristic name.
+#' @keywords
+#' @return characteristic name
+#' @export
+#' @examples
+#' 
+#' 
+#' 
+validateCharacteristicName <- function(characteristicName){
+  
+  all_names <- data.frame()
+  for(name in characteristicName){
+    url <- constructWQP_validateURL(name)
+    doc <- getWebServiceData(url)
+    retval <- as.data.frame(jsonlite::fromJSON(doc), stringsAsFactors = FALSE)
+    
+    if(nrows(retval) == 0){
+      warning(name, "not valid")
+    }
+    
+    all_names <- rbind(all_names , retval)
+  }
+  
+  return(retval)
+}
+
+
+
+
+
 #' Construct URL for NWIS water use data service
 #' 
 #' Reconstructs URLs to retrieve data from here: \url{https://waterdata.usgs.gov/nwis/wu}
@@ -348,7 +417,7 @@ constructWQPURL <- function(siteNumbers,parameterCd,startDate,endDate,zip=TRUE){
 #' @param years integer Years for data retrieval. Must be years ending in 0 or 5, or "ALL", which retrieves all available years.
 #' @param stateCd could be character (full name, abbreviation, id), or numeric (id)
 #' @param countyCd could be numeric (County IDs from countyCdLookup) or character ("ALL") 
-#' @param categories character Two-letter cateogory abbreviation(s)
+#' @param categories character Two-letter category abbreviation(s)
 #' @return url string
 #' @export
 #' @examples
